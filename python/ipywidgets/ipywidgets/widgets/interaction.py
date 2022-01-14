@@ -44,8 +44,10 @@ def show_inline_matplotlib_plots():
     except ImportError:
         return
 
-    if (mpl.get_backend() == 'module://ipykernel.pylab.backend_inline' or
-        mpl.get_backend() == 'module://matplotlib_inline.backend_inline'):
+    if mpl.get_backend() in [
+        'module://ipykernel.pylab.backend_inline',
+        'module://matplotlib_inline.backend_inline',
+    ]:
         flush_figures()
 
 
@@ -74,7 +76,7 @@ def interactive_output(f, controls):
 
 def _matches(o, pattern):
     """Match a pattern of types in a sequence."""
-    if not len(o) == len(pattern):
+    if len(o) != len(pattern):
         return False
     comps = zip(o,pattern)
     return all(isinstance(obj,kind) for obj,kind in comps)
@@ -291,7 +293,7 @@ class interactive(VBox):
     @classmethod
     def widget_from_abbrev(cls, abbrev, default=empty):
         """Build a ValueWidget instance given an abbreviation or Widget."""
-        if isinstance(abbrev, ValueWidget) or isinstance(abbrev, fixed):
+        if isinstance(abbrev, (ValueWidget, fixed)):
             return abbrev
 
         if isinstance(abbrev, tuple):
@@ -345,20 +347,14 @@ class interactive(VBox):
         """Make widgets from a tuple abbreviation."""
         if _matches(o, (Real, Real)):
             min, max, value = _get_min_max_value(o[0], o[1])
-            if all(isinstance(_, Integral) for _ in o):
-                cls = IntSlider
-            else:
-                cls = FloatSlider
+            cls = IntSlider if all(isinstance(_, Integral) for _ in o) else FloatSlider
             return cls(value=value, min=min, max=max)
         elif _matches(o, (Real, Real, Real)):
             step = o[2]
             if step <= 0:
                 raise ValueError("step must be >= 0, not %r" % step)
             min, max, value = _get_min_max_value(o[0], o[1], step=step)
-            if all(isinstance(_, Integral) for _ in o):
-                cls = IntSlider
-            else:
-                cls = FloatSlider
+            cls = IntSlider if all(isinstance(_, Integral) for _ in o) else FloatSlider
             return cls(value=value, min=min, max=max, step=step)
 
     @staticmethod

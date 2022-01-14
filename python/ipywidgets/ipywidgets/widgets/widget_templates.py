@@ -281,7 +281,10 @@ class GridspecLayout(GridBox, LayoutProperties):
         super().__init__(**kwargs)
         self.n_rows = n_rows
         self.n_columns = n_columns
-        self._grid_template_areas = [['.'] * self.n_columns for i in range(self.n_rows)]
+        self._grid_template_areas = [
+            ['.'] * self.n_columns for _ in range(self.n_rows)
+        ]
+
 
         self._grid_template_rows = 'repeat(%d, 1fr)' % (self.n_rows,)
         self._grid_template_columns = 'repeat(%d, 1fr)' % (self.n_columns,)

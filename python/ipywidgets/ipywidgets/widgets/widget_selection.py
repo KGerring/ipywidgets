@@ -6,6 +6,7 @@
 Represents an enumeration using a widget.
 """
 
+
 from collections.abc import Iterable, Mapping
 from itertools import chain
 
@@ -20,79 +21,11 @@ from .docutils import doc_subst
 from traitlets import (Unicode, Bool, Int, Any, Dict, TraitError, CaselessStrEnum,
                        Tuple, Union, observe, validate)
 
-_doc_snippets = {}
-_doc_snippets['selection_params'] = """
-    options: list
-        The options for the dropdown. This can either be a list of values, e.g.
-        ``['Galileo', 'Brahe', 'Hubble']`` or ``[0, 1, 2]``, or a list of
-        (label, value) pairs, e.g.
-        ``[('Galileo', 0), ('Brahe', 1), ('Hubble', 2)]``.
-
-    index: int
-        The index of the current selection.
-
-    value: any
-        The value of the current selection. When programmatically setting the
-        value, a reverse lookup is performed among the options to check that
-        the value is valid. The reverse lookup uses the equality operator by
-        default, but another predicate may be provided via the ``equals``
-        keyword argument. For example, when dealing with numpy arrays, one may
-        set ``equals=np.array_equal``.
-
-    label: str
-        The label corresponding to the selected value.
-
-    disabled: bool
-        Whether to disable user changes.
-
-    description: str
-        Label for this input group. This should be a string
-        describing the widget.
-"""
-
-_doc_snippets['multiple_selection_params'] = """
-    options: dict or list
-        The options for the dropdown. This can either be a list of values, e.g.
-        ``['Galileo', 'Brahe', 'Hubble']`` or ``[0, 1, 2]``, or a list of
-        (label, value) pairs, e.g.
-        ``[('Galileo', 0), ('Brahe', 1), ('Hubble', 2)]``.
-        The labels are the strings that will be displayed in the UI,
-        representing the actual Python choices, and should be unique.
-
-    index: iterable of int
-        The indices of the options that are selected.
-
-    value: iterable
-        The values that are selected. When programmatically setting the
-        value, a reverse lookup is performed among the options to check that
-        the value is valid. The reverse lookup uses the equality operator by
-        default, but another predicate may be provided via the ``equals``
-        keyword argument. For example, when dealing with numpy arrays, one may
-        set ``equals=np.array_equal``.
-
-    label: iterable of str
-        The labels corresponding to the selected value.
-
-    disabled: bool
-        Whether to disable user changes.
-
-    description: str
-        Label for this input group. This should be a string
-        describing the widget.
-"""
-
-_doc_snippets['slider_params'] = """
-    orientation: str
-        Either ``'horizontal'`` or ``'vertical'``. Defaults to ``horizontal``.
-
-    readout: bool
-        Display the current label next to the slider. Defaults to ``True``.
-
-    continuous_update: bool
-        If ``True``, update the value of the widget continuously as the user
-        holds the slider. Otherwise, the model is only updated after the
-        user has released the slider. Defaults to ``True``.
-"""
+_doc_snippets = {
+    'selection_params': "\x1f    options: list\x1f        The options for the dropdown. This can either be a list of values, e.g.\x1f        ``['Galileo', 'Brahe', 'Hubble']`` or ``[0, 1, 2]``, or a list of\x1f        (label, value) pairs, e.g.\x1f        ``[('Galileo', 0), ('Brahe', 1), ('Hubble', 2)]``.\x1f\x1f    index: int\x1f        The index of the current selection.\x1f\x1f    value: any\x1f        The value of the current selection. When programmatically setting the\x1f        value, a reverse lookup is performed among the options to check that\x1f        the value is valid. The reverse lookup uses the equality operator by\x1f        default, but another predicate may be provided via the ``equals``\x1f        keyword argument. For example, when dealing with numpy arrays, one may\x1f        set ``equals=np.array_equal``.\x1f\x1f    label: str\x1f        The label corresponding to the selected value.\x1f\x1f    disabled: bool\x1f        Whether to disable user changes.\x1f\x1f    description: str\x1f        Label for this input group. This should be a string\x1f        describing the widget.\x1f",
+    'multiple_selection_params': "\x1f    options: dict or list\x1f        The options for the dropdown. This can either be a list of values, e.g.\x1f        ``['Galileo', 'Brahe', 'Hubble']`` or ``[0, 1, 2]``, or a list of\x1f        (label, value) pairs, e.g.\x1f        ``[('Galileo', 0), ('Brahe', 1), ('Hubble', 2)]``.\x1f        The labels are the strings that will be displayed in the UI,\x1f        representing the actual Python choices, and should be unique.\x1f\x1f    index: iterable of int\x1f        The indices of the options that are selected.\x1f\x1f    value: iterable\x1f        The values that are selected. When programmatically setting the\x1f        value, a reverse lookup is performed among the options to check that\x1f        the value is valid. The reverse lookup uses the equality operator by\x1f        default, but another predicate may be provided via the ``equals``\x1f        keyword argument. For example, when dealing with numpy arrays, one may\x1f        set ``equals=np.array_equal``.\x1f\x1f    label: iterable of str\x1f        The labels corresponding to the selected value.\x1f\x1f    disabled: bool\x1f        Whether to disable user changes.\x1f\x1f    description: str\x1f        Label for this input group. This should be a string\x1f        describing the widget.\x1f",
+    'slider_params': "\x1f    orientation: str\x1f        Either ``'horizontal'`` or ``'vertical'``. Defaults to ``horizontal``.\x1f\x1f    readout: bool\x1f        Display the current label next to the slider. Defaults to ``True``.\x1f\x1f    continuous_update: bool\x1f        If ``True``, update the value of the widget continuously as the user\x1f        holds the slider. Otherwise, the model is only updated after the\x1f        user has released the slider. Defaults to ``True``.\x1f",
+}
 
 
 def _exhaust_iterable(x):

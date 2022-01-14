@@ -92,8 +92,11 @@ while True:
             large_prs.append(pr['number'])
             continue
             # TODO fetch commits
-        prs[pr['number']] = {'mergeCommit': pr['mergeCommit']['oid'],
-                            'commits': set(i['commit']['oid'] for i in pr['commits']['nodes'])}
+        prs[pr['number']] = {
+            'mergeCommit': pr['mergeCommit']['oid'],
+            'commits': {i['commit']['oid'] for i in pr['commits']['nodes']},
+        }
+
 
     has_next_page = results['pageInfo']['hasNextPage']
     cursor = results['pageInfo']['endCursor']
@@ -200,7 +203,7 @@ or the commit was pushed to master directly.
 """)
     print('\n'.join('%s %s %s'%(c, commits[c][0], commits[c][1]) for c in notfound))
     prs_to_check = [c for c in notfound if 'Merge pull request #' in commits[c][1] and commits[c][0] == 'noreply@github.com']
-    if len(prs_to_check)>0:
+    if prs_to_check:
         print()
         print("Try checking these PRs. They probably should be in the milestone, but probably aren't:")
         print()
