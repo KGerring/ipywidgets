@@ -8,6 +8,7 @@ group other widgets together and control their
 relative layouts.
 """
 
+
 from .widget import register, widget_serialization, Widget
 from .domwidget import DOMWidget
 from .widget_core import CoreWidget
@@ -16,16 +17,9 @@ from .trait_types import TypedTuple
 from traitlets import Unicode, CaselessStrEnum, Instance
 
 
-_doc_snippets = {}
-_doc_snippets['box_params'] = """
-    children: iterable of Widget instances
-        list of widgets to display
-
-    box_style: str
-        one of 'success', 'info', 'warning' or 'danger', or ''.
-        Applies a predefined style to the box. Defaults to '',
-        which applies no pre-defined style.
-"""
+_doc_snippets = {
+    'box_params': "\x1f    children: iterable of Widget instances\x1f        list of widgets to display\x1f\x1f    box_style: str\x1f        one of 'success', 'info', 'warning' or 'danger', or ''.\x1f        Applies a predefined style to the box. Defaults to '',\x1f        which applies no pre-defined style.\x1f"
+}
 
 
 @register

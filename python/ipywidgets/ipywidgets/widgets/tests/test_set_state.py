@@ -34,9 +34,7 @@ class NumberWidget(Widget):
 def transform_fromjson(data, widget):
     # Switch the two last elements when setting from json, if the first element is True
     # and always set first element to False
-    if not data[0]:
-        return data
-    return [False] + data[1:-2] + [data[-1], data[-2]]
+    return data if not data[0] else [False] + data[1:-2] + [data[-1], data[-2]]
 
 class TransformerWidget(Widget):
     d = List(Bool()).tag(sync=True, from_json=transform_fromjson)
@@ -224,11 +222,11 @@ def test_property_lock():
             print('_propagate_value', change.new)
             if self.stop:
                 return
-            if change.new == 42:
-                self.value = 2
             if change.new == 2:
                 self.stop = True
                 self.value = 42
+            elif change.new == 42:
+                self.value = 2
 
     widget = AnnoyingWidget(value=1)
     assert widget.value == 1

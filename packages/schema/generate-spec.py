@@ -124,7 +124,7 @@ def jsdefault(trait):
                 default = trait.make_dynamic_default()
             else:
                 default = trait.default_value
-        if isinstance(default, bytes) or isinstance(default, memoryview):
+        if isinstance(default, (bytes, memoryview)):
             default = trait.default_value_repr()
     return default
 
@@ -165,14 +165,15 @@ def mdtype(attribute):
 
 
 def format_widget(widget):
-    out = []
     fmt = '%(name)s (%(module)s, %(version)s)'
-    out.append('### %s; %s' % (fmt % widget['model'], fmt % widget['view']))
-    out.append('')
-    out.append('{name: <16} | {typing: <16} | {default: <16} | {help}'.format(
-        name='Attribute', typing='Type', default='Default', help='Help')
-    )
-    out.append('{0:-<16}-|-{0:-<16}-|-{0:-<16}-|----'.format('-'))
+    out = [
+        '### %s; %s' % (fmt % widget['model'], fmt % widget['view']),
+        '',
+        '{name: <16} | {typing: <16} | {default: <16} | {help}'.format(
+            name='Attribute', typing='Type', default='Default', help='Help'
+        ),
+        '{0:-<16}-|-{0:-<16}-|-{0:-<16}-|----'.format('-'),
+    ]
 
     for attribute in sorted(widget['attributes'], key=itemgetter('name')):
         s = '{name: <16} | {type: <16} | {default: <16} | {help}'.format(

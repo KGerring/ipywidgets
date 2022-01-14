@@ -90,9 +90,8 @@ class _Media(DOMWidget, ValueWidget, CoreWidget):
     def _load_file_value(cls, filename):
         if getattr(filename, 'read', None) is not None:
             return filename.read()
-        else:
-            with open(filename, 'rb') as f:
-                return f.read()
+        with open(filename, 'rb') as f:
+            return f.read()
 
     @classmethod
     def _guess_format(cls, tag, filename):
@@ -110,18 +109,11 @@ class _Media(DOMWidget, ValueWidget, CoreWidget):
             return None
 
     def _get_repr(self, cls):
-        # Truncate the value in the repr, since it will
-        # typically be very, very large.
         class_name = self.__class__.__name__
-
-        # Return value first like a ValueWidget
-        signature = []
-
         sig_value = 'value={!r}'.format(self.value[:40].tobytes())
         if self.value.nbytes > 40:
             sig_value = sig_value[:-1]+"..."+sig_value[-1]
-        signature.append(sig_value)
-
+        signature = [sig_value]
         for key in super(cls, self)._repr_keys():
             if key == 'value':
                 continue

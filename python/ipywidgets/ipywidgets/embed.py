@@ -10,6 +10,7 @@
 Functions for generating embeddable HTML/javascript of a widget.
 """
 
+
 import json
 import re
 from .widgets import Widget, DOMWidget
@@ -61,35 +62,10 @@ widget_view_template = """<script type="application/vnd.jupyter.widget-view+json
 DEFAULT_EMBED_SCRIPT_URL = 'https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@%s/dist/embed.js'%__html_manager_version__
 DEFAULT_EMBED_REQUIREJS_URL = 'https://cdn.jsdelivr.net/npm/@jupyter-widgets/html-manager@%s/dist/embed-amd.js'%__html_manager_version__
 
-_doc_snippets = {}
-_doc_snippets['views_attribute'] = """
-    views: widget or collection of widgets or None
-        The widgets to include views for. If None, all DOMWidgets are
-        included (not just the displayed ones).
-"""
-_doc_snippets['embed_kwargs'] = """
-    drop_defaults: boolean
-        Whether to drop default values from the widget states.
-    state: dict or None (default)
-        The state to include. When set to None, the state of all widgets
-        know to the widget manager is included. Otherwise it uses the
-        passed state directly. This allows for end users to include a
-        smaller state, under the responsibility that this state is
-        sufficient to reconstruct the embedded views.
-    indent: integer, string or None
-        The indent to use for the JSON state dump. See `json.dumps` for
-        full description.
-    embed_url: string or None
-        Allows for overriding the URL used to fetch the widget manager
-        for the embedded code. This defaults (None) to a `jsDelivr` CDN url.
-    requirejs: boolean (True)
-        Enables the requirejs-based embedding, which allows for custom widgets.
-        If True, the embed_url should point to an AMD module.
-    cors: boolean (True)
-        If True avoids sending user credentials while requesting the scripts.
-        When opening an HTML file from disk, some browsers may refuse to load
-        the scripts.
-"""
+_doc_snippets = {
+    'views_attribute': '\x1f    views: widget or collection of widgets or None\x1f        The widgets to include views for. If None, all DOMWidgets are\x1f        included (not just the displayed ones).\x1f',
+    'embed_kwargs': '\x1f    drop_defaults: boolean\x1f        Whether to drop default values from the widget states.\x1f    state: dict or None (default)\x1f        The state to include. When set to None, the state of all widgets\x1f        know to the widget manager is included. Otherwise it uses the\x1f        passed state directly. This allows for end users to include a\x1f        smaller state, under the responsibility that this state is\x1f        sufficient to reconstruct the embedded views.\x1f    indent: integer, string or None\x1f        The indent to use for the JSON state dump. See `json.dumps` for\x1f        full description.\x1f    embed_url: string or None\x1f        Allows for overriding the URL used to fetch the widget manager\x1f        for the embedded code. This defaults (None) to a `jsDelivr` CDN url.\x1f    requirejs: boolean (True)\x1f        Enables the requirejs-based embedding, which allows for custom widgets.\x1f        If True, the embed_url should point to an AMD module.\x1f    cors: boolean (True)\x1f        If True avoids sending user credentials while requesting the scripts.\x1f        When opening an HTML file from disk, some browsers may refuse to load\x1f        the scripts.\x1f',
+}
 
 
 def _find_widget_refs_by_state(widget, state):
@@ -116,7 +92,7 @@ def _find_widget_refs_by_state(widget, state):
 def _get_recursive_state(widget, store=None, drop_defaults=False):
     """Gets the embed state of a widget, and all other widgets it refers to as well"""
     if store is None:
-        store = dict()
+        store = {}
     state = widget._get_embed_state(drop_defaults=drop_defaults)
     store[widget.model_id] = state
 
@@ -130,9 +106,13 @@ def _get_recursive_state(widget, store=None, drop_defaults=False):
 def add_resolved_links(store, drop_defaults):
     """Adds the state of any link models between two models in store"""
     for widget_id, widget in Widget._active_widgets.items(): # go over all widgets
-        if isinstance(widget, Link) and widget_id not in store:
-            if widget.source[0].model_id in store and widget.target[0].model_id in store:
-                store[widget.model_id] = widget._get_embed_state(drop_defaults=drop_defaults)
+        if (
+            isinstance(widget, Link)
+            and widget_id not in store
+            and widget.source[0].model_id in store
+            and widget.target[0].model_id in store
+        ):
+            store[widget.model_id] = widget._get_embed_state(drop_defaults=drop_defaults)
 
 
 def dependency_state(widgets, drop_defaults=True):
